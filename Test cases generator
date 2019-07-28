@@ -1,0 +1,11 @@
+This Mathematica code generates two random strings, letters selected from set of 10 random letters,
+so that there are more intersections between the strings. This can be run on //develop.open.wolframcloud.com/
+
+SeedRandom[];
+alphabet = Join @@ Range[{97,65}, {122, 90}];
+subset = RandomChoice[alphabet, 10];
+str = RandomChoice[subset, #] &;
+a = FromCharacterCode @str[100];
+b = FromCharacterCode @str[100];
+{a, b}
+StringLength[LongestCommonSequence[a, b]]
