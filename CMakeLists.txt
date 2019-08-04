@@ -13,3 +13,14 @@ target_link_libraries(LCS Catch2::Catch2)
 include(CTest)
 include(Catch)
 catch_discover_tests(LCS)
+
+add_executable(experiments "experiments.cpp")
+
+add_executable(backtracking "backtracking.cpp")
+target_link_libraries(backtracking Catch2::Catch2)
+catch_discover_tests(backtracking)
+
+
+add_executable(workshops "workshops.cpp")
+target_link_libraries(workshops Catch2::Catch2)
+catch_discover_tests(workshops)
