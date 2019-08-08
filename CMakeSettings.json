@@ -11,7 +11,7 @@
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": [],
-      "cmakeToolchain": " -DCMAKE_TOOLCHAIN_FILE=C:/Users/Kaworu/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "cmakeToolchain": ""
     }
   ]
 }

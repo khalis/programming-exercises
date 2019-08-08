@@ -1,27 +1,17 @@
-#include <iterator>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
-struct segment {
-	int a, b;
-};
 
-struct solution : vector<segment> {
-	iterator next;
-};
+//recursive sum:
+int dumb_sum(int a) {
+	if (a == 0) return 0;
+	return a + dumb_sum(a - 1);
+}
 
 int main() {
-	vector<int> a;
-	a.resize(10);
-	a[4] = 1;
-	copy(cbegin(a), cend(a), ostream_iterator<int>(cout, " "));
-	cout << endl;
-	solution S;
-	S.push_back({ 1, 2 });
-
-	cout << S.size() << endl;
-
+	
+	cout << dumb_sum(3) << endl;
 	return 0;
 }
