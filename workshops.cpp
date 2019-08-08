@@ -39,17 +39,6 @@ Workshop* end(Available_Workshops& a) {
 	return a.workshops + a.n;
 }
 
-
-
-struct solution : vector<Workshop> {
-	Workshop* next = nullptr;
-	explicit operator bool() const { return !empty(); }
-};
-
-size_t max_solution;
-size_t zero_solutions;
-
-
 Available_Workshops* initialize(int* start, int* duration, size_t n) {
 	if (!n) return nullptr;
 	Available_Workshops* res = new Available_Workshops;
@@ -58,92 +47,6 @@ Available_Workshops* initialize(int* start, int* duration, size_t n) {
 	while (n--)
 		res->workshops[n] = { start[n], duration[n], start[n] + duration[n] };
 	return res;
-}
-
-bool is_extendable(Available_Workshops* sched, solution& c) {
-	if (c.next == sched->workshops + sched->n) {
-		c.clear();
-		return false;
-	}
-	return true;
-}
-
-solution& extend_solution(solution& c) {
-	c.push_back(*c.next);
-	c.next++;
-	return c;
-}
-
-bool overlap(const Workshop& a, const Workshop& b) {
-	if (a.duration == 0 || b.duration == 0) return false;
-	return (a.start < b.end) && (b.start < a.end);
-}
-
-bool reject(solution c) {
-	if (!c) return false;
-	return any_of(begin(c), prev(end(c)),
-		[&a = as_const(c.back())](const auto& b) {
-		return (a.start < b.end) && (b.start < a.end);
-		//return (a.start - b.end) * (b.start - a.end) > 0;
-		//overlap condition is valid only if start > end for a and b
-	}
-	);
-}
-
-solution root(Available_Workshops* sched) {
-	solution c;
-	c.next = find_if(sched->workshops, sched->workshops + sched->n,
-		[](const Workshop& a) {
-			return a.duration != 0;
-		});
-	zero_solutions = distance(sched->workshops, c.next);
-	//c.next = sched->workshops;
-	return c;
-};
-
-solution first(Available_Workshops* sched, solution c) {
-	if (!is_extendable(sched, c)) return c;
-	return extend_solution(c);
-}
-
-solution next(Available_Workshops* sched, solution c) {
-	if (!is_extendable(sched, c)) return c;
-	if (c) c.pop_back();
-	return extend_solution(c);
-};
-
-auto bt(Available_Workshops* sched, solution c) {
-#ifdef  logging
-	cout << "[" << (reject(c) ? "        " : "solution") << "](" << max_solution << "): ";
-	for (const auto& w : c)
-		cout << "{" << w.start << "," << w.end << "} ";
-	cout << endl;
-#endif //  logging
-
-	if (reject(c)) return;
-	max_solution = max(max_solution, c.size()); // if accept(c) then output(c)
-	if (max_solution == sched->n) return;
-	auto s = first(sched, c);
-
-	while (s) {
-		bt(sched, s);
-		s = next(sched, s);
-	}
-};
-
-int CalculateMaxWorkshops1(Available_Workshops* sched) {
-	if (sched->n == 0) return 0;
-	max_solution = 0;
-	//bool cmp(const Type1 & a, const Type2 & b);
-	sort(sched->workshops, sched->workshops + sched->n, [](const Workshop& a, const Workshop& b) {
-		return a.duration < b.duration;
-		});
-	bt(sched, root(sched));
-#ifdef logging
-	cout << endl;
-#endif // logging
-
-	return static_cast<int>(max_solution + zero_solutions);
 }
 
 int CalculateMaxWorkshops(Available_Workshops* sched) {
@@ -269,16 +172,6 @@ TEST_CASE("tightly fitting events", "[workshops]") {
 	ptr->workshops = input.data();
 	REQUIRE(CalculateMaxWorkshops(ptr) == 2);
 	delete ptr;
-}
-
-TEST_CASE("overlap() zero length", "[overlap]") {
-	////REQUIRE(overlap({ 10, 0, 10 }, { 0, 6, 6 }) == false);
-	vector<Workshop> input{ {5,4,9}, {8,1,9}, {3,1,4}, {1,1,2}, {0,6,6}, {5,2,7}, {2, 0, 2} };
-	for (const auto& w : input) {
-		//cout << w.start << endl;
-		REQUIRE(overlap({ 7, 0, 7 }, w) == false);
-	}
-
 }
 
 TEST_CASE("zero length", "[workshops]") {
